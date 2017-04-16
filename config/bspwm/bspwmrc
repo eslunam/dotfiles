@@ -13,7 +13,7 @@ WS10="10 "
 
 #sxhkd &
 xset -b &
-sxet -dpms &
+xset -dpms &
 xset s off &
 synclient TouchpadOff=1 &
 udiskie -aNTF &
