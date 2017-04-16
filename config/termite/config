@@ -1,0 +1,85 @@
+[options]
+scroll_on_output = false
+scroll_on_keystroke = true
+audible_bell = false
+mouse_autohide = false
+allow_bold = true
+dynamic_title = true
+urgent_on_bell = true
+clickable_url = true
+font = Source Code Pro 10
+scrollback_lines = 10000
+search_wrap = true
+size_hints = false
+
+cursor_blink = off
+cursor_shape = block
+
+browser = firefox
+
+filter_unmatched_urls = true
+
+[colors]
+background =        #3c3836
+foreground =        #ebdbb2
+foreground_bold =   #eadab1
+
+color0 =            #282828
+color8 =            #928374
+
+color1 =            #cc241d
+color9 =            #fb4934
+
+color2 =            #98971a
+color10 =           #b8bb26
+
+color3 =            #d79921
+color11 =           #fabd2f
+
+color4 =            #458588
+color12 =           #83a598
+
+color5 =            #b16286
+color13 =           #d3869b
+
+color6 =            #689d6a
+color14 =           #8ec07c
+
+color7 =            #a89984
+color15 =           #ebdbb2
+
+#background =        #3c3836
+#foreground =        #cccccc
+#foreground_bold =   #c1c1c1
+
+# black
+#color0 =            #201e24
+#color8 =            #837c78
+
+# red
+#color1 =            #2d2b1d
+#color9 =            #89827d
+
+# green
+#color2 =            #3f4f31
+#color10 =           #a0a799
+
+# yellow
+#color3 =            #413c3e
+#color11 =           #c2bec1
+
+# blue
+#color4 =            #423e41
+#color12 =           #c3bcb2
+
+# magenta
+#color5 =            #4f4a4b
+#color13 =           #cbc5ba
+
+# cyan
+#color6 =            #6e6765
+#color14 =           #e3ddd2
+
+# white
+#color7 =            #837e81
+#color15 =           #efe8dc

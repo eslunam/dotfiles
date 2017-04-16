@@ -46,7 +46,6 @@ set number
 
 set wrap linebreak nolist
 set textwidth=0
-set spell
 
 augroup filetypedetect
     au BufRead,BufNewFile config set filetype=sh
