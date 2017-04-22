@@ -28,7 +28,6 @@ alias p='ping archlinux.org'
 alias less='less -S'
 alias sync='sync;sync'
 alias grep='grep --color=auto'
-alias sync='/usr/bin/sync;/usr/bin/sync'
 
 alias mpva='mpv --vid=no'
 alias mpvap='mpv --vid=no --loop=inf --shuffle'
