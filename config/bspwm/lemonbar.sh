@@ -62,7 +62,7 @@ nodes() {
     active=$(bspc query -N -n)
     while read -r id; do
         if [ ! -z "$id" ]; then
-            local name
+            local name=""
             name=$(xprop -id "$id" WM_CLASS | awk -F '"' '{ print tolower($4) }')
             name="%{A:bspc node -f ${id}:} ${name} %{A}"
             name="%{A2:xkill -id ${id}:}${name}%{A}"
