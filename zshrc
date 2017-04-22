@@ -19,27 +19,13 @@ alias l1='ls -1'
 alias ll='ls -g'
 alias la='ls -A'
 alias lla='ll -A'
-alias q='exit'
-alias qq='exit'
-alias :q='exit'
-alias pamcan='pacman'
-alias ping='ping -c 4'
 alias p='ping archlinux.org'
-alias less='less -S'
-alias sync='sync;sync'
 alias grep='grep --color=auto'
 
 alias mpva='mpv --vid=no'
 alias mpvap='mpv --vid=no --loop=inf --shuffle'
 
 alias w3m='w3m -no-cookie'
-
-if [ "$TERM" = "linux" ]; then
-    alias mplayer='mplayer -vo fbdev2'
-fi
-
-export EDITOR=nvim
-export BROWSER=firefox
 
 # create a zkbd compatible hash;
 # to add other keys to this hash, see: man 5 terminfo
