@@ -19,9 +19,9 @@ autocmd BufNewFile,BufRead *.json set ft=javascript
 "autocmd BufNewFile,BufReadPost *.cpp let g:chromatica#enable_at_startup=1
 
 set noerrorbells
-set tabstop=8
+set tabstop=4
 set softtabstop=4
-set noexpandtab
+set expandtab
 set shiftwidth=4
 set autoindent
 
