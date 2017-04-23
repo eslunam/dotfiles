@@ -5,10 +5,6 @@
 # terminal emulator
 super + Return
 	termite
-super + v
-    /home/ellis/.local/bspwm/status/workspaces
-super + b
-    firejail --private=/home/ellis/.local/work --seccomp firefox "https://drive.google.com/drive/my-drive"
 
 super + e
     urxvt -e zsh -c ranger
@@ -16,9 +12,6 @@ super + e
 # program launcher
 super + d
 	rofi -show run
-
-super + x
-    lock
 
 super + f
     firejail --private=/home/ellis/.local/work --seccomp firefox
@@ -37,7 +30,7 @@ super + Escape
 	pkill -USR1 -x sxhkd
 
 super + shift + r
-    cat "$HOME/.config/bspwm/bspwmrc" | grep 'bspc\|WS.*' | sh
+    cat "$HOME/.config/bspwm/bspwmrc" | grep 'bspc\|WS.*' | bash
 
 # audio
 XF86AudioRaiseVolume
@@ -49,8 +42,6 @@ XF86AudioLowerVolume
 XF86AudioMute
     pulse-volume toggle
 
-super + z
-    termite -e "mpv --vid=no --shuffle --loop=inf $HOME/Music/ftl/ftl"
 #
 # bspwm hotkeys
 #
