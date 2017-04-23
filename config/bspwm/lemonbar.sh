@@ -28,30 +28,48 @@ fifo="/tmp/panel_fifo"
 mkfifo "$fifo"
 
 
-
 desktops() {
-    bspc query -T -m | jshon -e desktops -a -e name -u -p -e id | spaces
-}
+    local list=""
+    while read -r desktop; do
+	local name status="${desktop:0:1}"
+	name=$(printf "$desktop" | sed 's/^.//')
+	local output="%{A:bspc desktop -f ${name}:} ${name} %{A}"
+	case $status in
+	    O)
+		output="%{B${panel_hl}}${output}%{B-}"
+		;;
+	    f)
+		output="%{F${panel_faded}}${output}%{F-}"
+		;;
+	esac
 
-spaces() {
-    local current list="desktops|"
-    current="$(printf "%d\n" "$(bspc query -D -d)")"
-    while {
-        read -r name
-        read -r id
-    }; do
-        local output="%{A:bspc desktop -f ${id}:} ${name} %{A}"
-        if [ "$id" = "$current" ]; then
-            output="%{R}${output}%{R}"
-        elif [ "$(bspc query -T -d "$id" | jshon -e root)" = "null" ]; then
-            continue
-        fi
-
-        list="${list}${output}"
+	list="${list}${output}"
     done
-
-    printf "%s\n" "${list}"
 }
+
+#desktops_old() {
+    #bspc query -T -m | jshon -e desktops -a -e name -u -p -e id | spaces
+#}
+
+#spaces() {
+    #local current list="desktops|"
+    #current="$(printf "%d\n" "$(bspc query -D -d)")"
+    #while {
+        #read -r name
+        #read -r id
+    #}; do
+        #local output="%{A:bspc desktop -f ${id}:} ${name} %{A}"
+        #if [ "$id" = "$current" ]; then
+            #output="%{R}${output}%{R}"
+        #elif [ "$(bspc query -T -d "$id" | jshon -e root)" = "null" ]; then
+            #continue
+        #fi
+
+        #list="${list}${output}"
+    #done
+
+    #printf "%s\n" "${list}"
+#}
 
 windows() {
     bspc query -N -n .window -d focused | nodes
@@ -128,7 +146,7 @@ clock() {
 }
 
 
-while true; do desktops; sleep 0.1s; done > "$fifo" &
+#while true; do desktops; sleep 0.1s; done > "$fifo" &
 while true; do windows; sleep 0.5s; done > "$fifo" &
 while true; do disks; sleep 30s; done > "$fifo" &
 while true; do address; sleep 10s; done > "$fifo" &
@@ -137,9 +155,13 @@ while true; do clock; sleep 60s; done > "$fifo" &
 
 while read -r line; do
     case $line in
-        "desktops|"*)
-            desktops="$(printf "%s\n" "$line" | cut -d '|' -f 2)"
-            ;;
+	WM*)
+	    # desktop status from bspwm
+	    desktops=$(printf "$line" | tr ':' '\n' | tail -n+1 | head | desktops)
+	    #desktops=$(printf "%s" $line | desktops)
+        #"desktops|"*)
+            #desktops="$(printf "%s\n" "$line" | cut -d '|' -f 2)"
+            #;;
         "windows|"*)
             windows="$(printf "%s\n" "$line" | cut -d '|' -f 2)"
             ;;
