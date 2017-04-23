@@ -11,7 +11,8 @@ WS8="8 "
 WS9="9 "
 WS10="10 "
 
-#sxhkd &
+sxhkd &
+
 xset -b &
 xset -dpms &
 xset s off &
