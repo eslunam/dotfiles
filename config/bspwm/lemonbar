@@ -91,6 +91,7 @@ nodes() {
     active="$(bspc query -N -n)"
     while read -r id; do
         [ -z "$id" ] && continue
+
         local name=""
         name="$(xprop -id "$id" WM_CLASS | awk -F '"' '{ print tolower($4) }')"
 
