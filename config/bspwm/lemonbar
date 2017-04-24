@@ -1,6 +1,7 @@
 #!/usr/bin/busybox ash
 
 main() {
+    # set up panel size
     local res="" width="" height=""
     res=$(xdpyinfo | awk '/dimensions:/ { print $2 }')
     width=$(printf "%s" "$res" | cut -d 'x' -f 1)
@@ -8,15 +9,16 @@ main() {
     local panel_height=$((height/36))
     local panel_dimensions="${width}x${panel_height}+0+0"
 
+    bspc config bottom_padding "$panel_height"
+
     local panel_font="Source Code Pro-9"
     local icon_font="FontAwesome-11"
 
+    # colours from gruvbox palette
     local panel_bg="#ff3c3836"
     local panel_fg="#ffebdbb2"
     local panel_grey="#ff928374"
     local panel_green="#ffb8dd26"
-
-    bspc config bottom_padding "$panel_height"
 
     local fifo="/tmp/panel_fifo"
     [ -e "$fifo" ] && rm "$fifo"
@@ -28,6 +30,7 @@ main() {
     desktop_num=$(bspc query -D | wc -l)
 
     while true; do windows; sleep 0.033s; done > "$fifo" &
+    while true; do check_updates; sleep 30m; done > "$fifo" &
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
     while true; do volume; sleep 0.033s; done > "$fifo" &
@@ -39,6 +42,10 @@ main() {
                 desktops="$(printf "%s" "$line" | tr ':' '\n' | tail -n+2 | head -n "$desktop_num" | desktops)" ;;
             "windows|"*)
                 windows="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+            "updates|"*)
+                updates="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+            "checkupdates"*)
+                updates="$(printf "%s" "$(check_updates)" | cut -d '|' -f 2)" ;;
             "disks|"*)
                 disks="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "address|"*)
@@ -49,7 +56,7 @@ main() {
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
         esac
 
-        printf "%s\n" "%{l}${desktops}${windows}%{r}${disks}${address}${volume}${clock} "
+        printf "%s\n" "%{l}${desktops}${windows}%{r}${updates}${disks}${address}${volume}${clock} "
     done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
 }
 
@@ -74,6 +81,7 @@ desktops() {
 }
 
 windows() {
+    # pipe output to allow loop to modify list variable
     bspc query -N -n .window -d focused | nodes
 }
 
@@ -85,8 +93,12 @@ nodes() {
         [ -z "$id" ] && continue
         local name=""
         name="$(xprop -id "$id" WM_CLASS | awk -F '"' '{ print tolower($4) }')"
+
+        # left click to focus, middle click to close
         name="%{A:bspc node -f ${id}:} ${name} %{A}"
         name="%{A2:xkill -id ${id}:}${name}%{A}"
+
+        # highlight if focused
         [ "$id" = "$active" ] && name="%{R}${name}%{R}"
         list="${list}${name} "
     done
@@ -94,12 +106,21 @@ nodes() {
     printf "%s\n" "$list"
 }
 
+check_updates() {
+    local pac="" aur="" output="updates|"
+    pac=$(checkupdates | wc -l)
+    aur=$(cower -u | wc -l)
+    local num=$((pac+aur))
+    [[ "$num" -gt 0 ]] && output="${output}    ${num}"
+    printf "%s\n" "$output"
+}
+
 disks() {
     local root home
     root="root: $(disk_percent /)"
     home="home: $(disk_percent /home)"
 
-    printf "%s\n" "disks|  ${root}, ${home}"
+    printf "%s\n" "disks|   ${root}, ${home}"
 }
 
 disk_percent() {
