@@ -30,7 +30,7 @@ main() {
     desktop_num=$(bspc query -D | wc -l)
 
     while true; do windows; sleep 0.033s; done > "$fifo" &
-    while true; do check_updates; sleep 30m; done > "$fifo" &
+    #while true; do check_updates; sleep 30m; done > "$fifo" &
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
     while true; do volume; sleep 0.033s; done > "$fifo" &
@@ -44,7 +44,7 @@ main() {
                 windows="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "updates|"*)
                 updates="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
-            "checkupdates"*)
+            "checkupdates")
                 updates="$(printf "%s" "$(check_updates)" | cut -d '|' -f 2)" ;;
             "disks|"*)
                 disks="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
@@ -108,12 +108,11 @@ nodes() {
 }
 
 check_updates() {
-    local pac="" aur="" output="updates|"
+    local pac="" aur=""
     pac=$(checkupdates | wc -l)
     aur=$(cower -u | wc -l)
     local num=$((pac+aur))
-    [[ "$num" -gt 0 ]] && output="${output}    ${num}"
-    printf "%s\n" "$output"
+    printf "%s\n" "updates|  %{A:echo \"checkupdates\" > \"${fifo}\":}  ${num}%{A}"
 }
 
 disks() {
