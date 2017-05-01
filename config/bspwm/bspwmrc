@@ -39,4 +39,4 @@ bspc rule -a mplayer2 state=floating
 bspc rule -a mpv state=floating
 bspc rule -a explorer.exe desktop='^4' state=floating
 
-"$XDG_CONFIG_HOME/bspwm/lemonbar"
+ash "$XDG_CONFIG_HOME/bspwm/lemonbar" &
