@@ -1,4 +1,4 @@
-#!/usr/bin/busybox ash
+#!/usr/bin/env bash
 
 main() {
     # set up panel size
@@ -17,7 +17,7 @@ main() {
     # colours from gruvbox palette
     local panel_bg="#ff3c3836"
     local panel_fg="#ffebdbb2"
-    local panel_grey="#ff928374"
+    local panel_grey="#ff7c6f64"
     local panel_green="#ffb8dd26"
 
     local fifo="/tmp/panel_fifo"
@@ -86,7 +86,7 @@ windows() {
 }
 
 nodes() {
-    local list="windows|  "
+    local list="windows| "
     local active=""
     active="$(bspc query -N -n)"
     while read -r id; do
@@ -120,7 +120,7 @@ disks() {
     root="root: $(disk_percent /)"
     home="home: $(disk_percent /home)"
 
-    printf "%s\n" "disks|   ${root}, ${home}"
+    printf "%s\n" "disks|  ${root}, ${home}"
 }
 
 disk_percent() {
@@ -131,7 +131,7 @@ address() {
     local output="address|"
     local addr=""
     addr="$(ip route | awk '/default/ { print $7 }')"
-    [ ! -z "$addr" ] && output="${output}   %{F${panel_green}}${addr} %{F-}"
+    [ ! -z "$addr" ] && output="${output}  %{F${panel_green}}${addr} %{F-}"
     printf "%s\n" "$output"
 }
 
@@ -147,7 +147,7 @@ battery() {
 
         [ "$charging" = "Charging" ] && charging='+' || charging='-'
 
-        output="${output}   bat: ${percent} (${charging})"
+        output="${output}  bat: ${percent} (${charging})"
     fi
 
     printf "%s\n" "$output"
@@ -167,7 +167,7 @@ volume() {
 
 clock() {
     local date=""
-    date="$(date '+   %A, %Y/%m/%d %H:%M')"
+    date="$(date '+  %A, %Y/%m/%d %H:%M')"
     printf "%s\n" "clock|${date}"
 }
 
