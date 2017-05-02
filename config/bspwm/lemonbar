@@ -33,6 +33,7 @@ main() {
     #while true; do check_updates; sleep 30m; done > "$fifo" &
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
+    while true; do battery; sleep 30s; done > "$fifo" &
     while true; do volume; sleep 0.033s; done > "$fifo" &
     while true; do clock; sleep 60s; done > "$fifo" &
 
@@ -50,13 +51,15 @@ main() {
                 disks="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "address|"*)
                 address="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+            "battery|"*)
+                battery="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "volume|"*)
                 volume="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "clock|"*)
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
         esac
 
-        printf "%s\n" "%{l}${desktops}${windows}%{r}${updates}${disks}${address}${volume}${clock} "
+        printf "%s\n" "%{l}${desktops}${windows}%{r}${updates}${disks}${address}${battery}${volume}${clock} "
     done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
 }
 
@@ -131,7 +134,7 @@ address() {
     local output="address|"
     local addr=""
     addr="$(ip route | awk '/default/ { print $7 }')"
-    [ ! -z "$addr" ] && output="${output}  %{F${panel_green}}${addr} %{F-}"
+    [ ! -z "$addr" ] && output="${output}  %{F${panel_green}}${addr}%{F-}"
     printf "%s\n" "$output"
 }
 
@@ -140,9 +143,8 @@ battery() {
     local bat=""
     bat="$(acpi -b | sed 's/,//g')"
     if [ ! -z "$bat" ]; then
-        local percent=""
+        local percent="" charging=""
         percent="$(printf "%s" "$bat" | cut -d ' ' -f 4)"
-        local charging=""
         charging="$(printf "%s" "$bat" | cut -d ' ' -f 3)"
 
         [ "$charging" = "Charging" ] && charging='+' || charging='-'
