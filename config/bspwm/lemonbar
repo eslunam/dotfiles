@@ -138,7 +138,7 @@ address() {
     printf "%s\n" "$output"
 }
 
-battery() {
+battery_old() {
     local output="battery|"
     local bat=""
     bat="$(acpi -b | sed 's/,//g')"
@@ -148,6 +148,25 @@ battery() {
         charging="$(printf "%s" "$bat" | cut -d ' ' -f 3)"
 
         [ "$charging" = "Charging" ] && charging='+' || charging='-'
+
+        output="${output}  bat: ${percent} (${charging})"
+    fi
+
+    printf "%s\n" "$output"
+}
+
+bat_location="/sys/class/power_supply/BAT0"
+battery() {
+    local output="battery|"
+    if [ -e "$bat_location" ]; then
+        local current="" max=""
+        current="$(cat "${bat_location}/energy_now")"
+        max="$(cat "${bat_location}/energy_full")"
+
+        local percent="$((100*current/max))"
+
+        local charging=""
+        [ "$(cat "${bat_location}/status")" = "Charging" ] && charging='+' || charging='-'
 
         output="${output}  bat: ${percent} (${charging})"
     fi
