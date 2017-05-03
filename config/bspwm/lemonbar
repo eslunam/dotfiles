@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sep="  "
+
 main() {
     # set up panel size
     local res="" width="" height=""
@@ -123,7 +125,7 @@ disks() {
     root="root: $(disk_percent /)"
     home="home: $(disk_percent /home)"
 
-    printf "%s\n" "disks|  ${root}, ${home}"
+    printf "%s\n" "disks|${sep}${root}, ${home}"
 }
 
 disk_percent() {
@@ -134,7 +136,7 @@ address() {
     local output="address|"
     local addr=""
     addr="$(ip route | awk '/default/ { print $7 }')"
-    [ ! -z "$addr" ] && output="${output}  %{F${panel_green}}${addr}%{F-}"
+    [ ! -z "$addr" ] && output="${output}${sep}%{F${panel_green}}${addr}%{F-}"
     printf "%s\n" "$output"
 }
 
@@ -149,7 +151,7 @@ battery_old() {
 
         [ "$charging" = "Charging" ] && charging='+' || charging='-'
 
-        output="${output}  bat: ${percent} (${charging})"
+        output="${output}${sep}bat: ${percent} (${charging})"
     fi
 
     printf "%s\n" "$output"
@@ -168,7 +170,7 @@ battery() {
         local charging=""
         [ "$(cat "${bat_location}/status")" = "Charging" ] && charging='+' || charging='-'
 
-        output="${output}  bat: ${percent} (${charging})"
+        output="${output}${sep}bat: ${percent} (${charging})"
     fi
 
     printf "%s\n" "$output"
@@ -183,13 +185,13 @@ vol_suffix="%{A}%{A}%{A}"
 volume() {
     local vol=""
     [ "$(pamixer --get-mute)" = "true" ] && vol="mute" || vol="$(pamixer --get-volume)%"
-    printf "%s\n" "volume|  ${vol_prefix}${vol_label}${vol}${vol_suffix}"
+    printf "%s\n" "volume|${sep}${vol_prefix}${vol_label}${vol}${vol_suffix}"
 }
 
 clock() {
     local date=""
-    date="$(date '+  %A, %Y/%m/%d %H:%M')"
-    printf "%s\n" "clock|${date}"
+    date="$(date '+%A, %Y/%m/%d %H:%M')"
+    printf "%s\n" "clock|${sep}${date}"
 }
 
 main
