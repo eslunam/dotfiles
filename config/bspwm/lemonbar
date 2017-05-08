@@ -17,10 +17,10 @@ main() {
     local icon_font="FontAwesome-11"
 
     # colours from gruvbox palette
-    local panel_bg="#ff3c3836"
-    local panel_fg="#ffebdbb2"
-    local panel_grey="#ff7c6f64"
-    local panel_green="#ffb8dd26"
+    local panel_bg="$WM_BLACK"
+    local panel_fg="$WM_WHITE"
+    local panel_grey="$WM_GREY"
+    local panel_green="$WM_GREEN"
 
     local fifo="/tmp/panel_fifo"
     [ -e "$fifo" ] && rm "$fifo"
@@ -69,7 +69,6 @@ desktops() {
     local list=""
     while read -r desktop; do
         local token="${desktop:0:1}"
-        local name=""
         name="$(printf "%s" "$desktop" | sed 's/^.//')"
         local output="%{A:bspc desktop -f \"${name}\":} ${name} %{A}"
         case "$token" in
@@ -99,6 +98,8 @@ nodes() {
 
         local name=""
         name="$(xprop -id "$id" WM_CLASS | awk -F '"' '{ print tolower($4) }')"
+
+        [ "${#name}" -gt 16 ] && name="${name:0:16}"
 
         # left click to focus, middle click to close
         name="%{A:bspc node -f ${id}:} ${name} %{A}"
