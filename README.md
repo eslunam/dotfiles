@@ -5,7 +5,6 @@ Lemonbar script dependencies:
 bspwm
 xdpyinfo
 xprop
-xkill
 acpi (for battery)
 pamixer
 pacman

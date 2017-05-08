@@ -103,7 +103,8 @@ nodes() {
 
         # left click to focus, middle click to close
         name="%{A:bspc node -f ${id}:} ${name} %{A}"
-        name="%{A2:xkill -id ${id}:}${name}%{A}"
+        #name="%{A2:xkill -id ${id}:}${name}%{A}"
+        name="%{A2:bspc node ${id} -c:}${name}%{A}"
 
         # highlight if focused
         [ "$id" = "$active" ] && name="%{R}${name}%{R}"
