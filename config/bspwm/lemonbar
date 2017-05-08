@@ -31,7 +31,7 @@ main() {
     local desktop_num=""
     desktop_num=$(bspc query -D | wc -l)
 
-    while true; do windows; sleep 0.033s; done > "$fifo" &
+    #while true; do windows; sleep 0.033s; done > "$fifo" &
     #while true; do check_updates; sleep 30m; done > "$fifo" &
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
@@ -84,7 +84,7 @@ desktops() {
 }
 
 windows() {
-    local list="" focused=""
+    local list="$sep" focused=""
     focused="$(bspc query -N -n)"
 
     while read -r id; do
