@@ -84,7 +84,7 @@ desktops() {
 }
 
 windows() {
-    local list="$sep" focused=""
+    local list=" " focused=""
     focused="$(bspc query -N -n)"
 
     while read -r id; do
