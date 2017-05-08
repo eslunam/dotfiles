@@ -42,9 +42,8 @@ main() {
     while read -r line; do
         case "$line" in
             WM*)
-                desktops="$(printf "%s" "$line" | tr ':' '\n' | tail -n+2 | head -n "$desktop_num" | desktops)" ;;
-            "windows|"*)
-                windows="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+                desktops="$(printf "%s" "$line" | tr ':' '\n' | tail -n+2 | head -n "$desktop_num" | desktops)"
+                windows="$(bspc query -N -n .window -d focused | windows)" ;;
             "updates|"*)
                 updates="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "checkupdates")
@@ -61,7 +60,7 @@ main() {
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
         esac
 
-        printf "%s\n" "%{l}${desktops}${windows}%{r}${updates}${disks}${address}${battery}${volume}${clock} "
+        printf "%s\n" "%{l}${desktops}${windows}%{r}${windows_new}${updates}${disks}${address}${battery}${volume}${clock} "
     done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
 }
 
@@ -85,14 +84,9 @@ desktops() {
 }
 
 windows() {
-    # pipe output to allow loop to modify list variable
-    bspc query -N -n .window -d focused | nodes
-}
+    local list="" focused=""
+    focused="$(bspc query -N -n)"
 
-nodes() {
-    local list="windows| "
-    local active=""
-    active="$(bspc query -N -n)"
     while read -r id; do
         [ -z "$id" ] && continue
 
@@ -103,11 +97,10 @@ nodes() {
 
         # left click to focus, middle click to close
         name="%{A:bspc node -f ${id}:} ${name} %{A}"
-        #name="%{A2:xkill -id ${id}:}${name}%{A}"
         name="%{A2:bspc node ${id} -c:}${name}%{A}"
 
         # highlight if focused
-        [ "$id" = "$active" ] && name="%{R}${name}%{R}"
+        [ "$id" = "$focused" ] && name="%{R}${name}%{R}"
         list="${list}${name} "
     done
 
