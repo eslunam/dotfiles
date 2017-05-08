@@ -1,6 +1,7 @@
 export XDG_CONFIG_HOME="$HOME/.config"
 export EDITOR='nvim'
 export BROWSER='firefox'
+export PATH="$PATH:$HOME/bin"
 
 export WM_BLACK="#3C3836"
 export WM_WHITE="#EBDBB2"
@@ -22,7 +23,7 @@ if [ "$TERM" = "linux" ]; then
 fi
 
 if [ "$SHELL" = "/bin/ash" ]; then
-    PS1='[\u \w]$ '
+    PS1='[\u $(current_dir)]$ '
 fi
 
 if [ -z "$DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then

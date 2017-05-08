@@ -87,8 +87,6 @@ ZSH_HIGHLIGHT_STYLES[precommand]='fg=green'
 ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=green,bold'
 ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=green,bold'
 
-export PATH="$PATH:$HOME/bin"
-
 if [[ "$TERM" == "linux" ]]; then
     sudo setfont ter-116b
     echo -e '\033[?17;0;127c'
