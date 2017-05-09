@@ -33,12 +33,10 @@ main() {
     local desktop_num=""
     desktop_num=$(bspc query -D | wc -l)
 
-    #while true; do windows; sleep 0.033s; done > "$fifo" &
     #while true; do check_updates; sleep 30m; done > "$fifo" &
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
     while true; do battery; sleep 30s; done > "$fifo" &
-    #while true; do volume; sleep 0.033s; done > "$fifo" &
     while true; do clock; sleep 60s; done > "$fifo" &
 
     while read -r line; do
@@ -56,8 +54,6 @@ main() {
                 address="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "battery|"*)
                 battery="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
-            #"volume|"*)
-                #volume="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             *"vol:"*)
                 echo "YES" >> /ram/log
                 volume="$line" ;;
@@ -65,9 +61,9 @@ main() {
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
         esac
 
-        printf "%s\n" "%{l}${desktops}${windows}%{r}${windows_new}${updates}${disks}${address}${battery}${volume}${clock} "
-    #done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
-    done < "$fifo" | lemonbar -p -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
+        printf "%s\n" "%{l}${desktops}${windows}%{r}${updates}${disks}${address}${battery}${volume}${clock} "
+    done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
+    #done < "$fifo" | lemonbar -p -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
 }
 
 desktops() {
@@ -198,7 +194,7 @@ volume() {
 
 vol_level() {
     local vol=""
-    "$(pamixer --get-mute)" && vol="mute" || vol="$(pamixer --get-volume)%"
+    [ "$(pamixer --get-mute)" = "true" ] && vol="mute" || vol="$(pamixer --get-volume)%"
     printf "%s\n" "${vol_prefix}${sep}${vol_label}${vol}${vol_suffix}"
 }
 
