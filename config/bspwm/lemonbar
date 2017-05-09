@@ -22,11 +22,13 @@ main() {
     local panel_grey="$WM_GREY"
     local panel_green="$WM_GREEN"
 
-    local fifo="/tmp/panel_fifo"
+    local fifo="/tmp/panel_fifo_test"
     [ -e "$fifo" ] && rm "$fifo"
     mkfifo "$fifo"
 
     bspc subscribe report > "$fifo" &
+
+    volume > "$fifo" &
 
     local desktop_num=""
     desktop_num=$(bspc query -D | wc -l)
@@ -36,7 +38,7 @@ main() {
     while true; do disks; sleep 40s; done > "$fifo" &
     while true; do address; sleep 10s; done > "$fifo" &
     while true; do battery; sleep 30s; done > "$fifo" &
-    while true; do volume; sleep 0.033s; done > "$fifo" &
+    #while true; do volume; sleep 0.033s; done > "$fifo" &
     while true; do clock; sleep 60s; done > "$fifo" &
 
     while read -r line; do
@@ -54,14 +56,18 @@ main() {
                 address="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             "battery|"*)
                 battery="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
-            "volume|"*)
-                volume="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+            #"volume|"*)
+                #volume="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
+            *"vol:"*)
+                echo "YES" >> /ram/log
+                volume="$line" ;;
             "clock|"*)
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
         esac
 
         printf "%s\n" "%{l}${desktops}${windows}%{r}${windows_new}${updates}${disks}${address}${battery}${volume}${clock} "
-    done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
+    #done < "$fifo" | lemonbar -p -b -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
+    done < "$fifo" | lemonbar -p -g "$panel_dimensions" -a 99 -f "$panel_font" -f "$icon_font" -B "$panel_bg" -F "$panel_fg" | busybox ash
 }
 
 desktops() {
@@ -178,9 +184,22 @@ vol_label="vol: "
 vol_prefix="${vol_toggle}${vol_up}${vol_down}"
 vol_suffix="%{A}%{A}%{A}"
 volume() {
+    sleep 0.1
+    vol_level
+
+    pactl subscribe | while read -r line; do
+        case "$line" in
+            *sink*)
+                vol_level
+                ;;
+        esac
+    done
+}
+
+vol_level() {
     local vol=""
-    [ "$(pamixer --get-mute)" = "true" ] && vol="mute" || vol="$(pamixer --get-volume)%"
-    printf "%s\n" "volume|${sep}${vol_prefix}${vol_label}${vol}${vol_suffix}"
+    "$(pamixer --get-mute)" && vol="mute" || vol="$(pamixer --get-volume)%"
+    printf "%s\n" "${vol_prefix}${sep}${vol_label}${vol}${vol_suffix}"
 }
 
 clock() {
