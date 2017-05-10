@@ -55,7 +55,6 @@ main() {
             "battery|"*)
                 battery="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
             *"vol:"*)
-                echo "YES" >> /ram/log
                 volume="$line" ;;
             "clock|"*)
                 clock="$(printf "%s" "$line" | cut -d '|' -f 2)" ;;
@@ -117,6 +116,18 @@ check_updates() {
     printf "%s\n" "updates|  %{A:echo \"checkupdates\" > \"${fifo}\":}  ${num}%{A}"
 }
 
+disks2() {
+    while true; do
+        local root="" home=""
+        root="root: $(disk_percent /)"
+        home="home: $(disk_percent /home)"
+
+        printf "%s\n" "${set}${root}, ${home}"
+
+        sleep 60
+    done
+}
+
 disks() {
     local root home
     root="root: $(disk_percent /)"
@@ -135,6 +146,39 @@ address() {
     addr="$(ip route | awk '/default/ { print $7 }')"
     [ ! -z "$addr" ] && output="${output}${sep}%{F${panel_green}}${addr}%{F-}"
     printf "%s\n" "$output"
+}
+
+network() {
+    while true; do
+        local output="" addr=""
+        addr="$(ip route | awk '/default/ { print $7 }')"
+
+        if [ ! -z "$addr" ]; then
+            local tint="" essid="" signal=""
+            essid="$(iwconfig 2>&1 | awk -F '"' '/ESSID/ { print $2 }')"
+            signal="$(iwconfig 2>&1 | awk '/Link/ {gsub(/[=\/]/," ");
+                                                printf ("%.0f\n", $3/$4*100) }')"
+            local num=$((signal/10))
+            case "$num" in
+                1|2)
+                    tint="#9d0006" ;;
+                3|4)
+                    tint="#af3a03" ;;
+                5|6)
+                    tint="#b57614" ;;
+                7|8)
+                    tint="#79740e" ;;
+                9|10)
+                    tint="#98971a" ;;
+            esac
+
+            output="  %{F${tint}}${addr}%{F-}"
+        fi
+
+        printf "%s\n" "$output"
+
+        sleep 10
+    done
 }
 
 battery_old() {
