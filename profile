@@ -26,6 +26,29 @@ if [ "$SHELL" = "/bin/ash" ]; then
     PS1='[\u $(current_dir)]$ '
 fi
 
-if [ -z "$DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then
+if [[ "$TERM" == "linux" ]]; then
+    sudo setfont ter-116b
+    echo -e '\033[?17;0;127c'
+
+    echo -en "\e]P032302f" #black    -> this is the background color as well.
+    echo -en "\e]P8665c54" #darkgray
+    echo -en "\e]P19d0006" #darkred
+    echo -en "\e]P9cc241d" #red
+    echo -en "\e]P279740e" #darkgreen
+    echo -en "\e]PA98971a" #green
+    echo -en "\e]P3af3a03" #brown
+    echo -en "\e]PBb57614" #yellow
+    echo -en "\e]P4076678" #darkblue
+    echo -en "\e]PC458588" #blue
+    echo -en "\e]P58f3f71" #darkmagenta
+    echo -en "\e]PDb16286" #magenta
+    echo -en "\e]P6427b58" #darkcyan
+    echo -en "\e]PE689d61" #cyan
+    echo -en "\e]P7928374" #lightgray
+    echo -en "\e]PFebdbb2" #white   -> this is the foreground color as well.
+    clear #for background artifacting
+fi
+
+if [ -z "$DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] && [ "$(whoami)" = "ellis" ]; then
     exec startx &> /dev/null
 fi
