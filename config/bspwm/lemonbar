@@ -124,7 +124,7 @@ disks2() {
         home="home: $(disk_percent /home)"
 
         local output="${sep}${root}, ${home}"
-        [ "$output" != "$current" ] && printf "%s\n" "${output}" && current="$output"
+        [ "$output" != "$current" ] && printf "%s\n" "$output" && current="$output"
 
         sleep 60
     done
