@@ -117,12 +117,14 @@ check_updates() {
 }
 
 disks2() {
+    local current=""
     while true; do
         local root="" home=""
         root="root: $(disk_percent /)"
         home="home: $(disk_percent /home)"
 
-        printf "%s\n" "${set}${root}, ${home}"
+        local output="${sep}${root}, ${home}"
+        [ "$output" != "$current" ] && printf "%s\n" "${output}" && current="$output"
 
         sleep 60
     done
